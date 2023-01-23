@@ -12,28 +12,37 @@ namespace WPFClient1
     public class MainWindowViewModel : BaseViewModel
     {
         public ICommand ChangeSizeCommand { get; set; }
-        public ICommand RunEvolveCommand { get; set; }
-        public ICommand PauseEvolveCommand { get; set; }
-        public ICommand RunSingleNextGenerationCommand { get; set; }
         public ICommand ResetCommand { get; set; }
-        public ICommand ToggleCellLifeCommand { get; set; }
+        public ICommand RunCommand { get; set; }
+        public ICommand RunStepCommand { get; set; }
+        public ICommand PauseCommand { get; set; }
 
-        public int RowNumber
+
+        public int WidthY
         {
-            get => Settings.Default.RowNumber;
+            get => Settings.Default.WidthY;
             set
             {
-                Settings.Default.RowNumber = value;
+                Settings.Default.WidthY = value;
                 Settings.Default.Save();
             }
         }
 
-        public int ColumnNumber
+        public int WidthX
         {
-            get => Settings.Default.ColumnNumber;
+            get => Settings.Default.WidthX;
             set
             {
-                Settings.Default.ColumnNumber = value;
+                Settings.Default.WidthX = value;
+                Settings.Default.Save();
+            }
+        }
+        public int CellSize
+        {
+            get => Settings.Default.CellSize;
+            set
+            {
+                Settings.Default.CellSize = value;
                 Settings.Default.Save();
             }
         }
@@ -71,7 +80,6 @@ namespace WPFClient1
             }
         }
 
-
         public int DelayBetweenGeneration
         {
             get => Settings.Default.DelayBetweenGeneration;
@@ -79,6 +87,28 @@ namespace WPFClient1
             {
                 Settings.Default.DelayBetweenGeneration = value;
                 Settings.Default.Save();
+            }
+        }
+
+        private long calculateNextBoardTimeMs;
+        public long CalculateNextBoardTimeMs
+        {
+            get => calculateNextBoardTimeMs;
+            set
+            {
+                calculateNextBoardTimeMs = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private long calculateApplyRuleTimeMs;
+        public long CalculateApplyRuleTimeMs
+        {
+            get => calculateApplyRuleTimeMs;
+            set
+            {
+                calculateApplyRuleTimeMs = value;
+                OnPropertyChanged();
             }
         }
     }

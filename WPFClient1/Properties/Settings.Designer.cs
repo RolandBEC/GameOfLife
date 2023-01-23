@@ -26,24 +26,24 @@ namespace WPFClient1.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("50")]
-        public int RowNumber {
+        public int WidthY {
             get {
-                return ((int)(this["RowNumber"]));
+                return ((int)(this["WidthY"]));
             }
             set {
-                this["RowNumber"] = value;
+                this["WidthY"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("50")]
-        public int ColumnNumber {
+        public int WidthX {
             get {
-                return ((int)(this["ColumnNumber"]));
+                return ((int)(this["WidthX"]));
             }
             set {
-                this["ColumnNumber"] = value;
+                this["WidthX"] = value;
             }
         }
         
@@ -56,6 +56,18 @@ namespace WPFClient1.Properties {
             }
             set {
                 this["DelayBetweenGeneration"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int CellSize {
+            get {
+                return ((int)(this["CellSize"]));
+            }
+            set {
+                this["CellSize"] = value;
             }
         }
     }

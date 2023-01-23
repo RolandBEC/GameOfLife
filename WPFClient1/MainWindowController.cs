@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Input;
-using WPFClient1.Core;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Threading;
 using WPFClient1.Enum;
 using WPFClient1.Infrastructure;
 
@@ -13,8 +14,14 @@ namespace WPFClient1
 {
     public class MainWindowController
     {
+        private System.Diagnostics.Stopwatch _stopWatch = new System.Diagnostics.Stopwatch();
+        private DispatcherTimer dTimer;
+        private CellModel[,] _cellGrid;
+        private bool[,] _currentUniverse;
+        Rectangle[,] BoardRef;
+        int LiveCells = 0;
+
         private readonly MainWindow _mainWindow;
-        private IEvolutionEngine engine;
         private readonly EvolutionAlgorithm _evolutionAlgorithm = new EvolutionAlgorithm();
 
         public MainWindowViewModel ViewModel { get; } = new MainWindowViewModel();
@@ -23,100 +30,152 @@ namespace WPFClient1
         {
             _mainWindow = mainWindow;
 
-            ResetEngine();
 
             ViewModel.ChangeSizeCommand = new RelayCommand<object>(_ => ExecuteChangeSizeCommand());
-            ViewModel.RunSingleNextGenerationCommand = new RelayCommand<object>(_ => ExecuteEvolveGenerationCommand(), _ => CanEvolveGeneration());
-            ViewModel.PauseEvolveCommand = new RelayCommand<object>(_ => ViewModel.CurrentRunState = ERunState.Paused, _ => ViewModel.CurrentRunState == ERunState.Running);
-            ViewModel.RunEvolveCommand = new RelayCommand<object>(_ => ExecuteRunEvolveGeneration(), _ => CanRunEvolveGeneration());
+            //ViewModel.RunStepCommand = new RelayCommand<object>(_ => ExecuteEvolveGenerationCommand(), _ => CanEvolveGeneration());
+            ViewModel.PauseCommand = new RelayCommand<object>(_ => ExecutePauseCommand(), _ => ViewModel.CurrentRunState == ERunState.Running);
+            ViewModel.RunCommand = new RelayCommand<object>(_ => ExecuteRunCommand(), _ => CanRunEvolveGeneration());
 
             ViewModel.ResetCommand = new RelayCommand<object>(
-                _ => ResetGame(),
+                _ => ExecuteResetCommand(),
                 _ => CanResetGame()
             );
 
-            ViewModel.ToggleCellLifeCommand = new RelayCommand<string>(
-                (cellRowColumn) => ToggleCellLife(cellRowColumn),
-                _ => CanToggleCellLife()
-            );
         }
 
-        /// <summary>
-        /// Gets the specified cell from the current generation.
-        /// </summary>
-        /// <param name="row">Row index.</param>
-        /// <param name="column">Column index.</param>
-        /// <returns></returns>
-        public Cell GetCell(int row, int column)
+        public void CreateBoard()
         {
-            return engine.GetCell(row, column);
+            _mainWindow.cBoard.Children.Clear();
+            BoardRef = new Rectangle[ViewModel.WidthX, ViewModel.WidthY];
+            _cellGrid = new CellModel[ViewModel.WidthX, ViewModel.WidthY];
+            for (int i = 0; i < ViewModel.WidthX; i++)
+            {
+                for (int j = 0; j < ViewModel.WidthY; j++)
+                {
+                    CellModel Cell = new CellModel { State = false, Col = i, Ren = j };
+                    _cellGrid[i, j] = Cell;
+                    Rectangle r = new Rectangle
+                    {
+                        Width = ViewModel.CellSize,
+                        Height = ViewModel.CellSize,
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 0.5,
+                        Fill = Brushes.Black,
+                        Tag = Cell
+                    };
+                    r.MouseDown += R_MouseDown;
+                    BoardRef[i, j] = r;
+                    Canvas.SetLeft(r, j * ViewModel.CellSize);
+                    Canvas.SetTop(r, i * ViewModel.CellSize);
+                    _mainWindow.cBoard.Children.Add(r);
+                }
+            }
+        }
+        private void R_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel.CurrentRunState == ERunState.NotStarted || ViewModel.CurrentRunState == ERunState.Paused)
+            {
+                var cell = (CellModel)(sender as Rectangle).Tag;
+                ChangeCellState(cell);
+            }
         }
 
-        private void ExecuteChangeSizeCommand()
+        private async void ExecuteRunCommand()
         {
-            ResetEngine();
-            _mainWindow.BuildGridUI(ViewModel);
-            ResetGame();
-        }
-
-        private void ResetEngine()
-        {
-            engine = new EvolutionEngine(new Generation(ViewModel.RowNumber, ViewModel.ColumnNumber));
-            ViewModel.GenerationNumber = engine.CurrentGenerationNumber;
-        }
-
-
-        /// <summary>
-        /// Evolves the current generation.
-        /// </summary>
-        private async void ExecuteRunEvolveGeneration()
-        {
-            bool[,] oldUniverse, newUniverse = engine.GetCurrentGeneration().GetUniverse();
-
+            dTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, ViewModel.DelayBetweenGeneration) };
+            _currentUniverse = GetUniversionFromCurrentCellGrid();
             ViewModel.CurrentRunState = ERunState.Running;
-
-            while (ViewModel.CurrentRunState == ERunState.Running)
-            {
-                oldUniverse = newUniverse;
-                newUniverse = _evolutionAlgorithm.calculateNextBoard(oldUniverse);
-
-                ViewModel.CurrentRunState = EvolveCurrentGeneration(newUniverse);
-
-                await Task.Delay(ViewModel.DelayBetweenGeneration);
-            }
-
-            if (ViewModel.CurrentRunState == ERunState.Finished)
-            {
-                ResetGame();
-            }
-
-            CommandManager.InvalidateRequerySuggested();
+            dTimer.Tick += DispatcherTimer_Tick;
+            _stopWatch.Start();
+            dTimer.Start();
         }
 
-
-        private void ExecuteEvolveGenerationCommand()
+        private void DispatcherTimer_Tick(object sender, EventArgs e)
         {
-            bool[,] oldUniverse = engine.GetCurrentGeneration().GetUniverse();
-            bool[,] newUniverse = _evolutionAlgorithm.calculateNextBoard(oldUniverse);
-
-            ViewModel.CurrentRunState = EvolveCurrentGeneration(newUniverse) == ERunState.Finished ? ERunState.Finished : ERunState.Paused;
-            if (ViewModel.CurrentRunState == ERunState.Finished)
+            if (LiveCells > 0)
             {
-                ResetGame();
+
+                if (_currentUniverse == null)
+                    _currentUniverse = GetUniversionFromCurrentCellGrid();
+
+                _stopWatch.Restart();
+
+                bool[,] newUniverse = _evolutionAlgorithm.calculateNextBoard(_currentUniverse);
+
+                ViewModel.CalculateNextBoardTimeMs = _stopWatch.ElapsedTicks;
+
+                ApplyRules(newUniverse);
+
+                _stopWatch.Stop();
+                ViewModel.CalculateApplyRuleTimeMs = _stopWatch.ElapsedTicks - ViewModel.CalculateNextBoardTimeMs;
+
+                _currentUniverse = newUniverse;
             }
-            CommandManager.InvalidateRequerySuggested();
+            else
+            {
+                ViewModel.CurrentRunState = ERunState.Finished;
+                _currentUniverse = null;
+                dTimer.Stop();
+            }
         }
 
-
-        private ERunState EvolveCurrentGeneration(bool[,] targetUniverse)
+        private bool[,] GetUniversionFromCurrentCellGrid()
         {
-            EvolutionEngineActionResult result = engine.UpdateGeneration(targetUniverse);
+            bool[,] tmpUniverse = new bool[ViewModel.WidthX, ViewModel.WidthY];
 
-            ViewModel.GenerationNumber = result.GenerationNumber;
-
-            return result.EvolutionEnded ? ERunState.Finished : ERunState.Running;
+            for (int i = 0; i < ViewModel.WidthX; i++)
+            {
+                for (int j = 0; j < ViewModel.WidthY; j++)
+                {
+                    tmpUniverse[i,j] = _cellGrid[i,j].State;
+                }
+            }
+            return tmpUniverse;
         }
 
+        void ApplyRules(bool[,] newUniverse)
+        {
+            for (int i = 0; i < ViewModel.WidthX; i++)
+            {
+                for (int j = 0; j < ViewModel.WidthY; j++)
+                {
+                    if (!_cellGrid[i, j].State && (newUniverse[i, j] == true))
+                    {
+                        ChangeCellState(_cellGrid[i, j]);
+                    }
+                    else if (_cellGrid[i, j].State && (newUniverse[i, j] == false))
+                    {
+                        ChangeCellState(_cellGrid[i, j]);
+                    }
+                }
+            }
+
+            if (LiveCells == 0)
+                StopGame();
+        }
+
+        void ChangeCellState(CellModel cell)
+        {
+            if (!cell.State)
+            {
+                cell.State = true;
+                BoardRef[cell.Col, cell.Ren].Fill = Brushes.White;
+                LiveCells++;
+            }
+            else
+            {
+                cell.State = false;
+                BoardRef[cell.Col, cell.Ren].Fill = Brushes.Black;
+                LiveCells--;
+            }
+        }
+
+        void StopGame()
+        {
+            dTimer.Stop();
+            ViewModel.CurrentRunState = ERunState.Finished;
+        }
+                
         private bool CanRunEvolveGeneration()
         {
             return ViewModel.CurrentRunState == ERunState.NotStarted || ViewModel.CurrentRunState == ERunState.Paused;
@@ -127,15 +186,23 @@ namespace WPFClient1
             return ViewModel.CurrentRunState == ERunState.NotStarted || ViewModel.CurrentRunState == ERunState.Paused;
         }
 
-        /// <summary>
-        /// Resets the game of life.
-        /// </summary>
-        private void ResetGame()
+        private void ExecutePauseCommand()
         {
-            EvolutionEngineActionResult result = engine.ResetGeneration();
+            dTimer.Stop();
+            ViewModel.CurrentRunState = ERunState.Paused;
+        }
 
-            ViewModel.GenerationNumber = result.GenerationNumber;
-
+        void ExecuteResetCommand()
+        {
+            foreach (var cuadrito in BoardRef)
+            {
+                if (cuadrito.Tag != null)
+                {
+                    var celula = (CellModel)cuadrito.Tag;
+                    if (celula.State)
+                        ChangeCellState(celula);
+                }
+            }
             ViewModel.CurrentRunState = ERunState.NotStarted;
         }
 
@@ -148,27 +215,10 @@ namespace WPFClient1
             return ViewModel.CurrentRunState != ERunState.NotStarted;
         }
 
-        /// <summary>
-        /// Makes a specfied cell alive or dead.
-        /// </summary>
-        /// <param name="cellRowColumn">Formatted string identifying a particular cell. Format is "rowIndex,columnIndex"<param>
-        private void ToggleCellLife(string cellRowColumn)
+        public void ExecuteChangeSizeCommand()
         {
-            string[] cellRowColumnSplit = cellRowColumn.Split(',');
-
-            int row = int.Parse(cellRowColumnSplit[0]);
-            int column = int.Parse(cellRowColumnSplit[1]);
-
-            engine.ToggleCellLife(row, column);
-        }
-
-        /// <summary>
-        /// Determines if the cell life can be toggled.
-        /// </summary>
-        /// <returns>A boolea value which indicates if the cell life can be toggled.</returns>
-        private bool CanToggleCellLife()
-        {
-            return ViewModel.CurrentRunState == ERunState.NotStarted || ViewModel.CurrentRunState == ERunState.Paused;
+            ExecuteResetCommand();
+            CreateBoard();
         }
     }
 }

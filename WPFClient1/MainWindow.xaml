@@ -37,35 +37,43 @@
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" 
                        Grid.Column="0" 
-                       Text="Columns : "/>
+                       Text="WidthX : "/>
                 <TextBox Grid.Row="0" 
                      Grid.Column="1" 
-                     Text="{Binding ColumnNumber, Mode=TwoWay}"/>
+                     Text="{Binding WidthX, Mode=TwoWay}"/>
 
                 <TextBlock Grid.Row="1"
                        Grid.Column="0" 
-                       Text="Rows : "/>
+                       Text="WidthY : "/>
                 <TextBox Grid.Row="1" 
                      Grid.Column="1" 
-                     Text="{Binding RowNumber, Mode=TwoWay}"/>
+                     Text="{Binding WidthY, Mode=TwoWay}"/>
+
+                <TextBlock Grid.Row="2"
+                       Grid.Column="0" 
+                       Text="Cell Size : "/>
+                <TextBox Grid.Row="2" 
+                     Grid.Column="1" 
+                     Text="{Binding CellSize, Mode=TwoWay}"/>
 
                 <Button Grid.Column="2" Margin="5 0"
                     Grid.RowSpan="2"
                     Content="Generate"
                     Command="{Binding ChangeSizeCommand}"/>
 
-                <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal">
+                <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal">
                     <TextBlock Text="Delay between generation : "/>
                     <TextBox Text="{Binding DelayBetweenGeneration, Mode=TwoWay}"  Width="30"/>
                     <TextBlock Text="ms"/>
 
                 </StackPanel>
 
-                <CheckBox Grid.Row="3"
+                <CheckBox Grid.Row="4"
                           Grid.ColumnSpan="3"
                           IsChecked="{Binding ShowGridLines, Mode=TwoWay}">Show grid</CheckBox>
             </Grid>
@@ -84,7 +92,7 @@
                 </Button>
 
                 <!-- Pause button btn -->
-                <Button Command="{Binding PauseEvolveCommand}"
+                <Button Command="{Binding PauseCommand}"
                         Style="{StaticResource playerButtonStyle}">
                     <Button.Content>
                         <Path Data="{StaticResource geometry_pause_fill}"/>
@@ -92,7 +100,7 @@
                 </Button>
 
                 <!-- Run btn -->
-                <Button Command="{Binding RunEvolveCommand}" 
+                <Button Command="{Binding RunCommand}" 
                         Style="{StaticResource playerButtonStyle}">
                     <Button.Content>
                         <Path Fill="Black" Data="{StaticResource geometry_play_fill}"/>
@@ -100,7 +108,7 @@
                 </Button>
 
                 <!-- Next Step button btn -->
-                <Button Command="{Binding RunSingleNextGenerationCommand}"
+                <Button Command="{Binding RunStepCommand}"
                         Style="{StaticResource playerButtonStyle}">
                     <Button.Content>
                         <Path Data="{StaticResource geometry_next_empty}"/>
@@ -109,10 +117,21 @@
 
             </StackPanel>
 
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Calculate Next Board: "/>
+                <TextBlock Text="{Binding CalculateNextBoardTimeMs}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="CalculateApply rule: "/>
+                <TextBlock Text="{Binding CalculateApplyRuleTimeMs}"/>
+            </StackPanel>
+
         </StackPanel>
 
         <Border BorderThickness="1" BorderBrush="Black">
-            <Grid Name="UniverseGrid" ShowGridLines="{Binding ShowGridLines}" FocusVisualStyle="{x:Null}"/>
+            <ScrollViewer>
+                <Canvas x:Name="cBoard"  Width="1000" Height="1000" Margin="20"></Canvas>
+            </ScrollViewer>
         </Border>
     </DockPanel>
 </Window>
