@@ -1,0 +1,118 @@
+﻿<Window x:Class="WPFClient1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFClient1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        d:DataContext="{d:DesignInstance local:MainWindowViewModel}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/CommonStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="playerButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource roundedTransparentBtn}">
+                <Setter Property="Width" Value="24" />
+                <Setter Property="Height" Value="24" />
+                <Setter Property="Cursor" Value="Hand" />
+            </Style>
+
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <DockPanel Height="Auto" Margin="5">
+
+        <StackPanel DockPanel.Dock="Right" Width="200"  Margin="5">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" 
+                       Grid.Column="0" 
+                       Text="Columns : "/>
+                <TextBox Grid.Row="0" 
+                     Grid.Column="1" 
+                     Text="{Binding ColumnNumber, Mode=TwoWay}"/>
+
+                <TextBlock Grid.Row="1"
+                       Grid.Column="0" 
+                       Text="Rows : "/>
+                <TextBox Grid.Row="1" 
+                     Grid.Column="1" 
+                     Text="{Binding RowNumber, Mode=TwoWay}"/>
+
+                <Button Grid.Column="2" Margin="5 0"
+                    Grid.RowSpan="2"
+                    Content="Generate"
+                    Command="{Binding ChangeSizeCommand}"/>
+
+                <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal">
+                    <TextBlock Text="Delay between generation : "/>
+                    <TextBox Text="{Binding DelayBetweenGeneration, Mode=TwoWay}"  Width="30"/>
+                    <TextBlock Text="ms"/>
+
+                </StackPanel>
+
+                <CheckBox Grid.Row="3"
+                          Grid.ColumnSpan="3"
+                          IsChecked="{Binding ShowGridLines, Mode=TwoWay}">Show grid</CheckBox>
+            </Grid>
+
+
+            <TextBlock Text="{Binding GenerationNumber, StringFormat='Generation #: {0}'}"/>
+
+            <StackPanel Orientation="Horizontal">
+
+                <!-- Reset btn -->
+                <Button Command="{Binding ResetCommand}" 
+                        Style="{StaticResource playerButtonStyle}">
+                    <Button.Content>
+                        <Path Data="{StaticResource geometry_stop_fill}"/>
+                    </Button.Content>
+                </Button>
+
+                <!-- Pause button btn -->
+                <Button Command="{Binding PauseEvolveCommand}"
+                        Style="{StaticResource playerButtonStyle}">
+                    <Button.Content>
+                        <Path Data="{StaticResource geometry_pause_fill}"/>
+                    </Button.Content>
+                </Button>
+
+                <!-- Run btn -->
+                <Button Command="{Binding RunEvolveCommand}" 
+                        Style="{StaticResource playerButtonStyle}">
+                    <Button.Content>
+                        <Path Fill="Black" Data="{StaticResource geometry_play_fill}"/>
+                    </Button.Content>
+                </Button>
+
+                <!-- Next Step button btn -->
+                <Button Command="{Binding RunSingleNextGenerationCommand}"
+                        Style="{StaticResource playerButtonStyle}">
+                    <Button.Content>
+                        <Path Data="{StaticResource geometry_next_empty}"/>
+                    </Button.Content>
+                </Button>
+
+            </StackPanel>
+
+        </StackPanel>
+
+        <Border BorderThickness="1" BorderBrush="Black">
+            <Grid Name="UniverseGrid" ShowGridLines="{Binding ShowGridLines}" FocusVisualStyle="{x:Null}"/>
+        </Border>
+    </DockPanel>
+</Window>
