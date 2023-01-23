@@ -25,6 +25,20 @@ namespace WPFClient1.Core
             Initialise();
         }
 
+        public bool[,] GetUniverse()
+        {
+            bool[,] tmpUniverse = new bool[ColumnNumber, RowNumber];
+
+            for (int i = 0; i < ColumnNumber; i++)
+            {
+                for (int j = 0; j < RowNumber; j++)
+                {
+                    tmpUniverse[i, j] = universe[j, i].Alive;
+                }
+            }
+            return tmpUniverse;
+        }
+
         private void Initialise()
         {
             for (int row = 0; row < RowNumber; row++)

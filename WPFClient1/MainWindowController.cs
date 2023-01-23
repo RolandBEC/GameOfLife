@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameOfLife.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace WPFClient1
     {
         private readonly MainWindow _mainWindow;
         private IEvolutionEngine engine;
+        private readonly EvolutionAlgorithm _evolutionAlgorithm = new EvolutionAlgorithm();
 
         public MainWindowViewModel ViewModel { get; } = new MainWindowViewModel();
 
@@ -69,11 +71,17 @@ namespace WPFClient1
         /// </summary>
         private async void ExecuteRunEvolveGeneration()
         {
+            bool[,] oldUniverse, newUniverse = engine.GetCurrentGeneration().GetUniverse();
+
             ViewModel.CurrentRunState = ERunState.Running;
 
             while (ViewModel.CurrentRunState == ERunState.Running)
             {
-                ViewModel.CurrentRunState = EvolveCurrentGeneration();
+                oldUniverse = newUniverse;
+                newUniverse = _evolutionAlgorithm.calculateNextBoard(oldUniverse);
+
+                ViewModel.CurrentRunState = EvolveCurrentGeneration(newUniverse);
+
                 await Task.Delay(ViewModel.DelayBetweenGeneration);
             }
 
@@ -88,7 +96,10 @@ namespace WPFClient1
 
         private void ExecuteEvolveGenerationCommand()
         {
-            ViewModel.CurrentRunState = EvolveCurrentGeneration() == ERunState.Finished ? ERunState.Finished : ERunState.Paused;
+            bool[,] oldUniverse = engine.GetCurrentGeneration().GetUniverse();
+            bool[,] newUniverse = _evolutionAlgorithm.calculateNextBoard(oldUniverse);
+
+            ViewModel.CurrentRunState = EvolveCurrentGeneration(newUniverse) == ERunState.Finished ? ERunState.Finished : ERunState.Paused;
             if (ViewModel.CurrentRunState == ERunState.Finished)
             {
                 ResetGame();
@@ -97,9 +108,9 @@ namespace WPFClient1
         }
 
 
-        private ERunState EvolveCurrentGeneration()
+        private ERunState EvolveCurrentGeneration(bool[,] targetUniverse)
         {
-            EvolutionEngineActionResult result = engine.EvolveGeneration();
+            EvolutionEngineActionResult result = engine.UpdateGeneration(targetUniverse);
 
             ViewModel.GenerationNumber = result.GenerationNumber;
 
