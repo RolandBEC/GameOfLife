@@ -73,47 +73,48 @@
 
                 </StackPanel>
 
-                <CheckBox Grid.Row="4"
-                          Grid.ColumnSpan="3"
-                          IsChecked="{Binding ShowGridLines, Mode=TwoWay}">Show grid</CheckBox>
             </Grid>
 
 
             <TextBlock Text="{Binding GenerationNumber, StringFormat='Generation #: {0}'}"/>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel>
+                <!-- player button -->
+                <StackPanel Orientation="Horizontal">
 
-                <!-- Reset btn -->
-                <Button Command="{Binding ResetCommand}" 
+                    <!-- Reset btn -->
+                    <Button Command="{Binding ResetCommand}" 
                         Style="{StaticResource playerButtonStyle}">
-                    <Button.Content>
-                        <Path Data="{StaticResource geometry_stop_fill}"/>
-                    </Button.Content>
-                </Button>
+                        <Button.Content>
+                            <Path Data="{StaticResource geometry_stop_fill}"/>
+                        </Button.Content>
+                    </Button>
 
-                <!-- Pause button btn -->
-                <Button Command="{Binding PauseCommand}"
+                    <!-- Pause button btn -->
+                    <Button Command="{Binding PauseCommand}"
                         Style="{StaticResource playerButtonStyle}">
-                    <Button.Content>
-                        <Path Data="{StaticResource geometry_pause_fill}"/>
-                    </Button.Content>
-                </Button>
+                        <Button.Content>
+                            <Path Data="{StaticResource geometry_pause_fill}"/>
+                        </Button.Content>
+                    </Button>
 
-                <!-- Run btn -->
-                <Button Command="{Binding RunCommand}" 
+                    <!-- Run btn -->
+                    <Button Command="{Binding RunCommand}" 
                         Style="{StaticResource playerButtonStyle}">
-                    <Button.Content>
-                        <Path Fill="Black" Data="{StaticResource geometry_play_fill}"/>
-                    </Button.Content>
-                </Button>
+                        <Button.Content>
+                            <Path Fill="Black" Data="{StaticResource geometry_play_fill}"/>
+                        </Button.Content>
+                    </Button>
 
-                <!-- Next Step button btn -->
-                <Button Command="{Binding RunStepCommand}"
+                    <!-- Next Step button btn -->
+                    <Button Command="{Binding RunStepCommand}"
                         Style="{StaticResource playerButtonStyle}">
-                    <Button.Content>
-                        <Path Data="{StaticResource geometry_next_empty}"/>
-                    </Button.Content>
-                </Button>
+                        <Button.Content>
+                            <Path Data="{StaticResource geometry_next_empty}"/>
+                        </Button.Content>
+                    </Button>
+
+                </StackPanel>
 
             </StackPanel>
 
@@ -129,8 +130,9 @@
         </StackPanel>
 
         <Border BorderThickness="1" BorderBrush="Black">
-            <ScrollViewer>
-                <Canvas x:Name="cBoard"  Width="1000" Height="1000" Margin="20"></Canvas>
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto">
+                <Canvas x:Name="cBoard"  Margin="20"/>
             </ScrollViewer>
         </Border>
     </DockPanel>

@@ -52,7 +52,7 @@ namespace WPFClient1
             {
                 for (int j = 0; j < ViewModel.WidthY; j++)
                 {
-                    CellModel Cell = new CellModel { State = false, Col = i, Ren = j };
+                    CellModel Cell = new CellModel { State = false, X = i, Y = j };
                     _cellGrid[i, j] = Cell;
                     Rectangle r = new Rectangle
                     {
@@ -64,6 +64,7 @@ namespace WPFClient1
                         Tag = Cell
                     };
                     r.MouseDown += R_MouseDown;
+                    r.MouseMove += R_MouseMove; ;
                     BoardRef[i, j] = r;
                     Canvas.SetLeft(r, j * ViewModel.CellSize);
                     Canvas.SetTop(r, i * ViewModel.CellSize);
@@ -71,6 +72,24 @@ namespace WPFClient1
                 }
             }
         }
+
+        private CellModel lastSelectedCell;
+        private void R_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (e.LeftButton != MouseButtonState.Pressed ||
+                (ViewModel.CurrentRunState != ERunState.NotStarted && ViewModel.CurrentRunState != ERunState.Paused))
+                return;
+
+
+            var cell = (CellModel)(sender as Rectangle).Tag;
+            if(cell != lastSelectedCell)
+            {
+                ChangeCellState(cell);
+            }
+            lastSelectedCell = cell;
+        }
+
         private void R_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (ViewModel.CurrentRunState == ERunState.NotStarted || ViewModel.CurrentRunState == ERunState.Paused)
@@ -159,13 +178,13 @@ namespace WPFClient1
             if (!cell.State)
             {
                 cell.State = true;
-                BoardRef[cell.Col, cell.Ren].Fill = Brushes.White;
+                BoardRef[cell.X, cell.Y].Fill = Brushes.White;
                 LiveCells++;
             }
             else
             {
                 cell.State = false;
-                BoardRef[cell.Col, cell.Ren].Fill = Brushes.Black;
+                BoardRef[cell.X, cell.Y].Fill = Brushes.Black;
                 LiveCells--;
             }
         }
