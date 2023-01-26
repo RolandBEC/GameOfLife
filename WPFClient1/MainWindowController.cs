@@ -48,9 +48,9 @@ namespace WPFClient1
             _mainWindow.cBoard.Children.Clear();
             BoardRef = new Rectangle[ViewModel.WidthX, ViewModel.WidthY];
             _cellGrid = new CellModel[ViewModel.WidthX, ViewModel.WidthY];
-            for (int i = 0; i < ViewModel.WidthX; i++)
+            for (int i = 0; i < BoardRef.GetLength(0); i++)
             {
-                for (int j = 0; j < ViewModel.WidthY; j++)
+                for (int j = 0; j < BoardRef.GetLength(1); j++)
                 {
                     CellModel Cell = new CellModel { State = false, X = i, Y = j };
                     _cellGrid[i, j] = Cell;
@@ -148,9 +148,9 @@ namespace WPFClient1
         {
             bool[,] tmpUniverse = new bool[ViewModel.WidthX, ViewModel.WidthY];
 
-            for (int i = 0; i < ViewModel.WidthX; i++)
+            for (int i = 0; i < tmpUniverse.GetLength(0); i++)
             {
-                for (int j = 0; j < ViewModel.WidthY; j++)
+                for (int j = 0; j < tmpUniverse.GetLength(1); j++)
                 {
                     tmpUniverse[i,j] = _cellGrid[i,j].State;
                 }
@@ -160,9 +160,9 @@ namespace WPFClient1
 
         void ApplyRules(bool[,] currentUniverse, bool[,] newUniverse)
         {
-            for (int i = 0; i < ViewModel.WidthX; i++)
+            for (int i = 0; i < currentUniverse.GetLength(0); i++)
             {
-                for (int j = 0; j < ViewModel.WidthY; j++)
+                for (int j = 0; j < currentUniverse.GetLength(1); j++)
                 {
                     if(!currentUniverse[i, j])
                     {
