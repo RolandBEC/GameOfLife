@@ -121,10 +121,12 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Calculate Next Board: "/>
                 <TextBlock Text="{Binding CalculateNextBoardTimeMs}"/>
+                <TextBlock Text="ms"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="CalculateApply rule: "/>
                 <TextBlock Text="{Binding CalculateApplyRuleTimeMs}"/>
+                <TextBlock Text="ms"/>
             </StackPanel>
 
         </StackPanel>

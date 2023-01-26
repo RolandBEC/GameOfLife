@@ -32,7 +32,7 @@ namespace WPFClient1
 
 
             ViewModel.ChangeSizeCommand = new RelayCommand<object>(_ => ExecuteChangeSizeCommand());
-            //ViewModel.RunStepCommand = new RelayCommand<object>(_ => ExecuteEvolveGenerationCommand(), _ => CanEvolveGeneration());
+            ViewModel.RunStepCommand = new RelayCommand<object>(_ => ExecuteRunStepCommand(), _ => CanEvolveGeneration());
             ViewModel.PauseCommand = new RelayCommand<object>(_ => ExecutePauseCommand(), _ => ViewModel.CurrentRunState == ERunState.Running);
             ViewModel.RunCommand = new RelayCommand<object>(_ => ExecuteRunCommand(), _ => CanRunEvolveGeneration());
 
@@ -88,6 +88,7 @@ namespace WPFClient1
                 ChangeCellState(cell);
             }
             lastSelectedCell = cell;
+            _currentUniverse = null;
         }
 
         private void R_MouseDown(object sender, MouseButtonEventArgs e)
@@ -96,6 +97,7 @@ namespace WPFClient1
             {
                 var cell = (CellModel)(sender as Rectangle).Tag;
                 ChangeCellState(cell);
+                _currentUniverse = null;
             }
         }
 
@@ -109,11 +111,10 @@ namespace WPFClient1
             dTimer.Start();
         }
 
-        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        private void ExecuteRunStepCommand()
         {
             if (LiveCells > 0)
             {
-
                 if (_currentUniverse == null)
                     _currentUniverse = GetUniversionFromCurrentCellGrid();
 
@@ -121,12 +122,12 @@ namespace WPFClient1
 
                 bool[,] newUniverse = _evolutionAlgorithm.calculateNextBoard(_currentUniverse);
 
-                ViewModel.CalculateNextBoardTimeMs = _stopWatch.ElapsedTicks;
+                ViewModel.CalculateNextBoardTimeMs = _stopWatch.ElapsedMilliseconds;
 
-                ApplyRules(newUniverse);
+                ApplyRules(_currentUniverse, newUniverse);
 
                 _stopWatch.Stop();
-                ViewModel.CalculateApplyRuleTimeMs = _stopWatch.ElapsedTicks - ViewModel.CalculateNextBoardTimeMs;
+                ViewModel.CalculateApplyRuleTimeMs = _stopWatch.ElapsedMilliseconds - ViewModel.CalculateNextBoardTimeMs;
 
                 _currentUniverse = newUniverse;
             }
@@ -136,6 +137,11 @@ namespace WPFClient1
                 _currentUniverse = null;
                 dTimer.Stop();
             }
+        }
+
+        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            ExecuteRunStepCommand();
         }
 
         private bool[,] GetUniversionFromCurrentCellGrid()
@@ -152,19 +158,21 @@ namespace WPFClient1
             return tmpUniverse;
         }
 
-        void ApplyRules(bool[,] newUniverse)
+        void ApplyRules(bool[,] currentUniverse, bool[,] newUniverse)
         {
             for (int i = 0; i < ViewModel.WidthX; i++)
             {
                 for (int j = 0; j < ViewModel.WidthY; j++)
                 {
-                    if (!_cellGrid[i, j].State && (newUniverse[i, j] == true))
+                    if(!currentUniverse[i, j])
                     {
-                        ChangeCellState(_cellGrid[i, j]);
+                        if(newUniverse[i, j]) 
+                            ChangeCellState(_cellGrid[i, j]);
                     }
-                    else if (_cellGrid[i, j].State && (newUniverse[i, j] == false))
+                    else
                     {
-                        ChangeCellState(_cellGrid[i, j]);
+                        if(!newUniverse[i, j])
+                            ChangeCellState(_cellGrid[i, j]);
                     }
                 }
             }
@@ -213,13 +221,13 @@ namespace WPFClient1
 
         void ExecuteResetCommand()
         {
-            foreach (var cuadrito in BoardRef)
+            foreach (var tile in BoardRef)
             {
-                if (cuadrito.Tag != null)
+                if (tile.Tag != null)
                 {
-                    var celula = (CellModel)cuadrito.Tag;
-                    if (celula.State)
-                        ChangeCellState(celula);
+                    var cell = (CellModel)tile.Tag;
+                    if (cell.State)
+                        ChangeCellState(cell);
                 }
             }
             ViewModel.CurrentRunState = ERunState.NotStarted;
