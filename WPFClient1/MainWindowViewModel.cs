@@ -26,7 +26,14 @@ namespace WPFClient1
 
         public ICommand ExportCommand { get; set; }
 
+        public ICommand GenerateWorldCommand { get; set; }
 
+        private int _worldSize = 514;
+        public int WorldSize
+        {
+            get => this._worldSize;
+            set => this.SetField(ref this._worldSize, value);
+        }
 
         private GameOfLife _goL;
         public GameOfLife GoL

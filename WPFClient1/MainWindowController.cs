@@ -39,6 +39,7 @@ namespace WPFClient1
             ViewModel.ClearCommand = new RelayCommand(ExecuteClearCommand, (o) => !ViewModel.SimulationRunning);
             ViewModel.ImportCommand = new RelayCommand(ExecuteImportCommand, (o) => !ViewModel.SimulationRunning);
             ViewModel.ExportCommand = new RelayCommand(ExecuteExportCommand, (o) => !ViewModel.SimulationRunning);
+            ViewModel.GenerateWorldCommand = new RelayCommand(ExecuteGenerateWorldCommand, (o) => !ViewModel.SimulationRunning);
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
@@ -54,6 +55,13 @@ namespace WPFClient1
                     this.ResizeAndRandomize(ViewModel.CanvasSize);
                     break;
             }
+        }
+
+        private void ExecuteGenerateWorldCommand(object parameter)
+        {
+            ViewModel.SetGameOfLife(new GameOfLife(ViewModel.CanvasSize));
+            ViewModel.GoL.Randomize();
+            UpdateImage();
         }
 
         public void Init()

@@ -135,17 +135,32 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0"
+                    <StackPanel Grid.Row="0"
+                                Orientation="Horizontal"
+                                Margin="0 0 0 5">
+                        <TextBlock Text="Canvas size "/>
+                        <TextBox Text="{Binding WorldSize, Delay=200, Mode=TwoWay}"
+                                 MinWidth="75"/>
+                    </StackPanel>
+
+                    <Button Grid.Row="2"
+                            Content="Generate"
+                            Command="{Binding GenerateWorldCommand}"/>
+
+                    <TextBlock Grid.Row="3"
                                VerticalAlignment="Center" TextWrapping="Wrap"
                                Margin="0 0 0 5">
 				        <Run>Generation</Run>
 				        <Run Text="{Binding GoL.Generation, Mode=OneWay, FallbackValue=600000}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Row="1" 
+                    <TextBlock Grid.Row="4" 
                                TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
                                Margin="0 0 0 5">
 				        <Run>Active cells:</Run>
@@ -154,7 +169,7 @@
 				        <Run Text="{Binding GoL.TotalCells, Mode=OneWay, FallbackValue=262144}" />
                     </TextBlock>
 
-                    <CheckBox Grid.Row="2"
+                    <CheckBox Grid.Row="5"
                               Content="Wrap Around" IsChecked="{Binding GoL.WrapAround}"
 					          IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"
 					          VerticalContentAlignment="Center"
@@ -172,7 +187,7 @@
                     BorderBrush="DarkGray" BorderThickness="1" CornerRadius="2"
                     Background="White" >
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5">
-                    <Border BorderBrush="Black" BorderThickness="1" Width="514" Height="514">
+                    <Border BorderBrush="Black" BorderThickness="1" Width="{Binding WorldSize}" Height="{Binding WorldSize}">
                         <Grid>
                             <Image Source="{Binding GOLSource}" RenderOptions.BitmapScalingMode="NearestNeighbor">
                                 <Image.Effect>
@@ -180,9 +195,9 @@
                                 </Image.Effect>
                             </Image>
                             <Canvas x:Name="GOLCanvas" Background="#01FFFFFF"
-                        MouseDown="GOLCanvas_MouseDown" 
-                        MouseUp="GOLCanvas_MouseUp"
-                        MouseMove="GOLCanvas_MouseMove" />
+                                    MouseDown="GOLCanvas_MouseDown" 
+                                    MouseUp="GOLCanvas_MouseUp"
+                                    MouseMove="GOLCanvas_MouseMove" />
                         </Grid>
                     </Border>
                 </ScrollViewer>
