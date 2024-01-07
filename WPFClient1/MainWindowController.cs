@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WPFClient1.Infrastructure;
+using WPFClient1.Core;
 
 namespace WPFClient1
 {
@@ -30,7 +31,6 @@ namespace WPFClient1
         {
             _mainWindow = mainWindow;
 
-
             ViewModel = new MainWindowViewModel();
             ViewModel.StartCommand = new RelayCommand(ExecuteStartCommand, (o) => !ViewModel.SimulationRunning);
             ViewModel.StepCommand = new RelayCommand(ExecuteStepCommand, (o) => !ViewModel.SimulationRunning);
@@ -39,7 +39,6 @@ namespace WPFClient1
             ViewModel.ClearCommand = new RelayCommand(ExecuteClearCommand, (o) => !ViewModel.SimulationRunning);
             ViewModel.ImportCommand = new RelayCommand(ExecuteImportCommand, (o) => !ViewModel.SimulationRunning);
             ViewModel.ExportCommand = new RelayCommand(ExecuteExportCommand, (o) => !ViewModel.SimulationRunning);
-
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
@@ -59,7 +58,7 @@ namespace WPFClient1
 
         public void Init()
         {
-            ViewModel.SetGameOfLife(new GameOfLife.Core.GameOfLife(ViewModel.CanvasSize));
+            ViewModel.SetGameOfLife(new GameOfLife(ViewModel.CanvasSize));
             ViewModel.GoL.Randomize();
             UpdateImage();
         }
@@ -95,7 +94,6 @@ namespace WPFClient1
             this.ViewModel.GoL.Reset();
             this.UpdateImage();
         }
-
 
         private void ExecuteImportCommand(object parameter)
         {

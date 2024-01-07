@@ -8,9 +8,13 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         d:DataContext="{d:DesignInstance local:MainWindowViewModel}"
-        Typography.NumeralAlignment="Tabular" Typography.SlashedZero="True" Typography.NumeralStyle="Lining"
-        UseLayoutRounding="True" Closing="Window_Closing"
-        SizeToContent="WidthAndHeight">
+        Typography.NumeralAlignment="Tabular" 
+        Typography.SlashedZero="True" 
+        Typography.NumeralStyle="Lining"
+        UseLayoutRounding="True" 
+        Closing="Window_Closing"
+        SizeToContent="WidthAndHeight"
+        Background="White">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -25,168 +29,163 @@
     <DockPanel Margin="5">
 
         <!-- Menu -->
-        <Grid DockPanel.Dock="Left" 
-              TextOptions.TextRenderingMode="Grayscale">
+        <Grid DockPanel.Dock="Top">
             <Grid.RowDefinitions>
-                <RowDefinition Height="32" />
-                <RowDefinition Height="4" />
-                <RowDefinition Height="32" />
-                <RowDefinition Height="4" />
-                <RowDefinition Height="32" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" 
-                        Command="{Binding StartCommand}"
-                        Style="{StaticResource roundedTransparentBtn}">
-                    <Path Data="{StaticResource geometry_play_fill}"/>
-                </Button>
-                <Button Grid.Column="2" 
-                        Command="{Binding StepCommand}"
-                        Style="{StaticResource roundedTransparentBtn}">
-                    <Path Data="{StaticResource geometry_next_empty}"/>
-                </Button>
-                <Button Grid.Column="4"
-                        Command="{Binding StopCommand}"
-                        Style="{StaticResource roundedTransparentBtn}">
-                    <Path Data="{StaticResource geometry_pause_fill}"/>
-                </Button>
-            </Grid>
-
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0"
-                        Command="{Binding RandomizeCommand}"
-                        Style="{StaticResource roundedTransparentBtn}">
-                    <Path Data="{StaticResource geometry_shuffle}"/>
-                </Button>
-                <Button Grid.Column="2"
-                        Command="{Binding ClearCommand}"
-                        Style="{StaticResource roundedTransparentBtn}">
-                    <Path Data="{StaticResource geometry_eraser}"/>
-                </Button>
-            </Grid>
-
-            <Grid Grid.Row="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" 
-                        Command="{Binding ImportCommand}"
+            <!-- toolbar -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                
+                <Button Command="{Binding ImportCommand}"
                         Style="{StaticResource roundedTransparentBtn}">
                     <Path Data="{StaticResource geometry_publish}"/>
                 </Button>
-                <Button Grid.Column="2"
-                        Command="{Binding ExportCommand}"
+                
+                <Button Command="{Binding ExportCommand}"
                         Style="{StaticResource roundedTransparentBtn}">
                     <Path Data="{StaticResource geometry_save}"/>
                 </Button>
-            </Grid>
-        </Grid>
 
-        <!-- Sliders -->
-        <Grid DockPanel.Dock="Top"
-              Margin="0,4,0,8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="48" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="48" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="28" />
-                <RowDefinition Height="28" />
-                <RowDefinition Height="28" />
-            </Grid.RowDefinitions>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
 
-            <Grid Column="0" ColumnSpan="3" Margin="24,0">
+                <Button Command="{Binding StartCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_play_fill}"/>
+                </Button>
+                
+                <Button Command="{Binding StepCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_next_empty}"/>
+                </Button>
+                
+                <Button Command="{Binding StopCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_pause_fill}"/>
+                </Button>
+                
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
+
+                <Button Command="{Binding RandomizeCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_shuffle}"/>
+                </Button>
+                
+                <Button Command="{Binding ClearCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_eraser}"/>
+                </Button>
+
+            </StackPanel>
+
+            <!-- Sliders -->
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48" />
                     <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="48" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28" />
+                    <RowDefinition Height="28" />
+                </Grid.RowDefinitions>
 
-                <Border Grid.Column="0" Background="Black" CornerRadius="4"
-						Width="135" Height="24"
-						HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14">
-						<Run>Generation</Run>
-						<Run FontWeight="Medium" Text="{Binding GoL.Generation, Mode=OneWay, FallbackValue=600000}" />
-                    </TextBlock>
-                </Border>
-
-                <Border Grid.Column="1" Background="Black" CornerRadius="4"
-						Width="164" Height="24"
-						HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock TextAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14">
-						<Run>Active:</Run>
-						<Run FontWeight="Medium" Text="{Binding GoL.ActiveCells, Mode=OneWay, FallbackValue=65536}" />
-						<Run>/</Run>
-						<Run Text="{Binding GoL.TotalCells, Mode=OneWay, FallbackValue=262144}" />
-                    </TextBlock>
-                </Border>
-
-                <Border Grid.Column="2" Background="Black" CornerRadius="4"
-						Width="114" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <CheckBox Content="Wrap Around" IsChecked="{Binding GoL.WrapAround}"
-							  IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"
-							  FontSize="14" FontWeight="Medium" Foreground="White" Padding="3,0,0,0"
-							  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-							  HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
-
-            </Grid>
-
-            <Label Grid.Row="1" Content="Size" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
-            <Slider x:Name="SizeSlider" Grid.Column="1" Grid.Row="1"
-					VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
-					LargeChange="8" SmallChange="2" MouseWheel="Slider_Scroll"
-					Maximum="512" Minimum="8" TickFrequency="2"
-					Value="{Binding CanvasSize, FallbackValue=128}"
-					IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}" />
-            <Label Grid.Column="2" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                <Label Grid.Row="0" Content="Size" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+                <Slider Grid.Column="1" Grid.Row="0"
+                        x:Name="SizeSlider" 
+					    VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
+					    LargeChange="8" SmallChange="2" MouseWheel="Slider_Scroll"
+					    Maximum="512" Minimum="8" TickFrequency="2"
+					    Value="{Binding CanvasSize, FallbackValue=128}"
+					    IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}" />
+                
+                <Label Grid.Column="2" Grid.Row="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
 				   Content="{Binding ElementName=SizeSlider, Path=Value}" ContentStringFormat="{}{0}²" />
 
-            <Label Grid.Row="2" Content="Speed" HorizontalContentAlignment="Center" />
-            <Slider x:Name="SpeedSlider" Grid.Column="1" Grid.Row="2" Delay="100"
-					VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
-					LargeChange="1" SmallChange="0.25" MouseWheel="Slider_Scroll"
-					Maximum="8" Minimum="0.25" TickFrequency="0.25"
-					Value="{Binding SimSpeedFactor, FallbackValue=2}" />
-            <Label Grid.Column="2" Grid.Row="2" HorizontalContentAlignment="Center"
-				   Content="{Binding ElementName=SpeedSlider, Path=Value}" ContentStringFormat="{}{0:N2}×" />
+                <Label Grid.Row="1" Content="Speed" HorizontalContentAlignment="Center" />
+                <Slider Grid.Column="1" Grid.Row="1" 
+                        x:Name="SpeedSlider" 
+                        Delay="100"
+					    VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
+					    LargeChange="1" SmallChange="0.25" MouseWheel="Slider_Scroll"
+					    Maximum="8" Minimum="0.25" TickFrequency="0.25"
+					    Value="{Binding SimSpeedFactor, FallbackValue=2}" />
+                <Label  Grid.Column="2" Grid.Row="1" 
+                        HorizontalContentAlignment="Center"
+				        Content="{Binding ElementName=SpeedSlider, Path=Value}" ContentStringFormat="{}{0:N2}×" />
+            </Grid>
+
         </Grid>
 
-        <!-- Main panel -->
-        <Grid Margin="5">
-            <Border BorderBrush="Black" BorderThickness="1" Width="514" Height="514">
-                <Grid>
-                    <Image Source="{Binding GOLSource}"
-                           RenderOptions.BitmapScalingMode="NearestNeighbor">
-                        <Image.Effect>
-                            <DropShadowEffect BlurRadius="8" Color="Black" RenderingBias="Quality" Direction="270" ShadowDepth="2" Opacity="0.66" />
-                        </Image.Effect>
-                    </Image>
-                    <Canvas x:Name="GOLCanvas" Background="#01FFFFFF"
-				            MouseDown="GOLCanvas_MouseDown" 
-                            MouseUp="GOLCanvas_MouseUp"
-				            MouseMove="GOLCanvas_MouseMove" />
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" 
+                    HorizontalAlignment="Stretch"
+                    BorderThickness="1" BorderBrush="DarkGray"
+                    CornerRadius="2">
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                      Margin="5" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               VerticalAlignment="Center" TextWrapping="Wrap"
+                               Margin="0 0 0 5">
+				        <Run>Generation</Run>
+				        <Run Text="{Binding GoL.Generation, Mode=OneWay, FallbackValue=600000}" />
+                    </TextBlock>
+
+                    <TextBlock Grid.Row="1" 
+                               TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
+                               Margin="0 0 0 5">
+				        <Run>Active cells:</Run>
+				        <Run Text="{Binding GoL.ActiveCells, Mode=OneWay, FallbackValue=65536}" />
+				        <Run>/</Run>
+				        <Run Text="{Binding GoL.TotalCells, Mode=OneWay, FallbackValue=262144}" />
+                    </TextBlock>
+
+                    <CheckBox Grid.Row="2"
+                              Content="Wrap Around" IsChecked="{Binding GoL.WrapAround}"
+					          IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"
+					          VerticalContentAlignment="Center"
+					          VerticalAlignment="Center" 
+                              Margin="0 0 0 5"/>
+
                 </Grid>
+
+            </Border>
+
+            <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="5"/>
+
+            <!-- Main panel -->
+            <Border Grid.Column="2" 
+                    BorderBrush="DarkGray" BorderThickness="1" CornerRadius="2"
+                    Background="White" >
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5">
+                    <Border BorderBrush="Black" BorderThickness="1" Width="514" Height="514">
+                        <Grid>
+                            <Image Source="{Binding GOLSource}" RenderOptions.BitmapScalingMode="NearestNeighbor">
+                                <Image.Effect>
+                                    <DropShadowEffect BlurRadius="8" Color="Black" RenderingBias="Quality" Direction="270" ShadowDepth="2" Opacity="0.66" />
+                                </Image.Effect>
+                            </Image>
+                            <Canvas x:Name="GOLCanvas" Background="#01FFFFFF"
+                        MouseDown="GOLCanvas_MouseDown" 
+                        MouseUp="GOLCanvas_MouseUp"
+                        MouseMove="GOLCanvas_MouseMove" />
+                        </Grid>
+                    </Border>
+                </ScrollViewer>
             </Border>
         </Grid>
         

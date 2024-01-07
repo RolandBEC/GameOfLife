@@ -1,14 +1,14 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using WPFClient1.Infrastructure;
 
-namespace GameOfLife.Core
+namespace WPFClient1.Core
 {
-    public sealed class GameOfLife : INotifyPropertyChanged
+    public sealed class GameOfLife : BaseViewModel
     {
-
         private int _generation;
         private bool[] _nextGen;
-
         private FieldSize _size;
         private bool[] _world;
 
@@ -114,19 +114,6 @@ namespace GameOfLife.Core
             }
         }
 
-        public void ToggleCell(Point p, bool nextGen = false)
-        {
-            var idx = (p.Y * this.Size.Width) + p.X;
-
-            if (nextGen)
-                this._nextGen[idx] = !this._nextGen[idx];
-            else
-                this.World[idx] = !this.World[idx];
-
-            this.OnPropertyChanged(nameof(this.ActiveCells));
-        }
-
-        // better implementation of the modulo operator because the default C# implementation is broken and unusable
         private static int Mod(int i, int m)
         {
             var r = i % m;
@@ -180,13 +167,9 @@ namespace GameOfLife.Core
 
             var isAlive = this.GetWorldCell(x, y);
 
-            // Rules according to Wikipedia: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules 
-            // (Rules 1 and 3 get handled implicitly)
-
-            // Rule 2: Any live cell with two or three live neighbours lives on to the next generation.
+            // Rules : https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules 
             var stillAlive = isAlive && neighbors is 2 or 3;
 
-            // Rule 4: Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
             stillAlive |= !isAlive && neighbors == 3;
 
             this.SetCell(x, y, stillAlive, true, false);
@@ -205,27 +188,5 @@ namespace GameOfLife.Core
             this.OnPropertyChanged(nameof(this.World));
             this.OnPropertyChanged(nameof(this.ActiveCells));
         }
-
-        #region INotifyPropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-                return;
-
-            field = value;
-            this.OnPropertyChanged(propertyName);
-        }
-
-        #endregion
-
     }
-
 }

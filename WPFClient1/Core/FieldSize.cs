@@ -1,4 +1,4 @@
-﻿namespace GameOfLife.Core
+﻿namespace WPFClient1.Core
 {
 	public readonly struct FieldSize 
 	{

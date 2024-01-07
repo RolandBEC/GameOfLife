@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using WPFClient1.Infrastructure;
+using WPFClient1.Core;
 
 namespace WPFClient1
 {
@@ -27,8 +28,8 @@ namespace WPFClient1
 
 
 
-        private GameOfLife.Core.GameOfLife _goL;
-        public GameOfLife.Core.GameOfLife GoL
+        private GameOfLife _goL;
+        public GameOfLife GoL
         {
             get => this._goL;
             private set => this.SetField(ref this._goL, value);
@@ -69,7 +70,7 @@ namespace WPFClient1
             set => this.SetField(ref this._golSource, value);
         }
 
-        public void SetGameOfLife(GameOfLife.Core.GameOfLife gol)
+        public void SetGameOfLife(GameOfLife gol)
         {
             GoL = gol;
         }

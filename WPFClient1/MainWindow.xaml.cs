@@ -16,7 +16,6 @@ namespace WPFClient1
         /// </summary>
         private MainWindowController mainController;
 
-
         /// <summary>
         /// Initialises the view model, user interface and data binding from the view model
         /// to the interface.
