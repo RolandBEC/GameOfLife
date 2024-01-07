@@ -22,24 +22,87 @@
         </ResourceDictionary>
     </Window.Resources>
 
+    <DockPanel Margin="5">
 
-    <StackPanel Margin="8">
-        <Border BorderBrush="Black" BorderThickness="1" Width="514" Height="514">
-            <Grid>
-                <Image Source="{Binding GOLSource}"
-					   RenderOptions.BitmapScalingMode="NearestNeighbor">
-                    <Image.Effect>
-                        <DropShadowEffect BlurRadius="8" Color="Black" RenderingBias="Quality" Direction="270" ShadowDepth="2" Opacity="0.66" />
-                    </Image.Effect>
-                </Image>
-                <Canvas x:Name="GOLCanvas" Background="#01FFFFFF"
-						MouseDown="GOLCanvas_MouseDown" 
-                        MouseUp="GOLCanvas_MouseUp"
-						MouseMove="GOLCanvas_MouseMove" />
+        <!-- Menu -->
+        <Grid DockPanel.Dock="Left" 
+              TextOptions.TextRenderingMode="Grayscale">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32" />
+                <RowDefinition Height="4" />
+                <RowDefinition Height="32" />
+                <RowDefinition Height="4" />
+                <RowDefinition Height="32" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="4" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="4" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" 
+                        Command="{Binding StartCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_play_fill}"/>
+                </Button>
+                <Button Grid.Column="2" 
+                        Command="{Binding StepCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_next_empty}"/>
+                </Button>
+                <Button Grid.Column="4"
+                        Command="{Binding StopCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_pause_fill}"/>
+                </Button>
             </Grid>
-        </Border>
 
-        <Grid Margin="0,4,0,8">
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="4" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0"
+                        Command="{Binding RandomizeCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_shuffle}"/>
+                </Button>
+                <Button Grid.Column="2"
+                        Command="{Binding ClearCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_eraser}"/>
+                </Button>
+            </Grid>
+
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="4" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" 
+                        Command="{Binding ImportCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_publish}"/>
+                </Button>
+                <Button Grid.Column="2"
+                        Command="{Binding ExportCommand}"
+                        Style="{StaticResource roundedTransparentBtn}">
+                    <Path Data="{StaticResource geometry_save}"/>
+                </Button>
+            </Grid>
+        </Grid>
+
+        <!-- Sliders -->
+        <Grid DockPanel.Dock="Top"
+              Margin="0,4,0,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="48" />
                 <ColumnDefinition />
@@ -109,99 +172,24 @@
 				   Content="{Binding ElementName=SpeedSlider, Path=Value}" ContentStringFormat="{}{0:N2}×" />
         </Grid>
 
-        <Grid TextOptions.TextRenderingMode="Grayscale">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="32" />
-                <RowDefinition Height="4" />
-                <RowDefinition Height="32" />
-                <RowDefinition Height="4" />
-                <RowDefinition Height="32" />
-            </Grid.RowDefinitions>
-
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" 
-                        Command="{Binding StartCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE768;"
-								   Margin="0,0,4,0" VerticalAlignment="Center" />
-                        <TextBlock Text="Start" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="2" 
-                        Command="{Binding StepCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE76C;"
-								   Margin="0,0,4,0" VerticalAlignment="Center" />
-                        <TextBlock Text="Step" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="4"
-                        Command="{Binding StopCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE769;"
-								   Margin="0,0,4,0" VerticalAlignment="Center" />
-                        <TextBlock Text="Pause" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-            </Grid>
-
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0"
-                        Command="{Binding RandomizeCommand, Mode=TwoWay}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE8B1;"
-								   Margin="0,0,4,0" VerticalAlignment="Center" />
-                        <TextBlock Text="Randomize Board" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="2"
-                        Command="{Binding ClearCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE75C;"
-								   Margin="0,0,4,0" VerticalAlignment="Center" />
-                        <TextBlock Text="Clear Board" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-            </Grid>
-
-            <Grid Grid.Row="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" 
-                        Command="{Binding ImportCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE8E5;"
-								   Margin="0,0,4,0" VerticalAlignment="Center" />
-                        <TextBlock Text="Import Image" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="2"
-                        Command="{Binding ExportCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE74E;"
-								   Margin="0,0,4,0" VerticalAlignment="Center" />
-                        <TextBlock Text="Export Image" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-            </Grid>
+        <!-- Main panel -->
+        <Grid Margin="5">
+            <Border BorderBrush="Black" BorderThickness="1" Width="514" Height="514">
+                <Grid>
+                    <Image Source="{Binding GOLSource}"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor">
+                        <Image.Effect>
+                            <DropShadowEffect BlurRadius="8" Color="Black" RenderingBias="Quality" Direction="270" ShadowDepth="2" Opacity="0.66" />
+                        </Image.Effect>
+                    </Image>
+                    <Canvas x:Name="GOLCanvas" Background="#01FFFFFF"
+				            MouseDown="GOLCanvas_MouseDown" 
+                            MouseUp="GOLCanvas_MouseUp"
+				            MouseMove="GOLCanvas_MouseMove" />
+                </Grid>
+            </Border>
         </Grid>
-    </StackPanel>
+        
+    </DockPanel>
+    
 </Window>
