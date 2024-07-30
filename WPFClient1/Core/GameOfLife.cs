@@ -78,9 +78,9 @@ namespace WPFClient1.Core
         {
             this.Reset();
 
-            var r = new Random();
-            var newWorld = new bool[this.TotalCells];
-            var num = this.TotalCells * fraction;
+            Random r = new();
+            bool[] newWorld = new bool[this.TotalCells];
+            double num = this.TotalCells * fraction;
             for (var i = 0; i < num; i++)
             {
                 var x = r.Next(this.Size.Width);
@@ -100,7 +100,7 @@ namespace WPFClient1.Core
 
         public void SetCell(int x, int y, bool newValue, bool nextGen = false, bool propertyChanged = true)
         {
-            var idx = (y * this.Size.Width) + x;
+            int idx = (y * this.Size.Width) + x;
 
             if (nextGen)
                 this._nextGen[idx] = newValue;
@@ -116,15 +116,15 @@ namespace WPFClient1.Core
 
         private static int Mod(int i, int m)
         {
-            var r = i % m;
+            int r = i % m;
 
             return r < 0 ? r + m : r;
         }
 
         private bool IsNeighborAlive(int x, int y, int offsetX, int offsetY)
         {
-            var newX = x + offsetX;
-            var newY = y + offsetY;
+            int newX = x + offsetX;
+            int newY = y + offsetY;
 
             if (!this.WrapAround && (newX < 0 || newX >= this.Size.Width || newY < 0 || newY >= this.Size.Height))
                 return false;
@@ -140,8 +140,8 @@ namespace WPFClient1.Core
 
         private void GenerationStep(int idx)
         {
-            var x = idx % this.Size.Width;
-            var y = idx / this.Size.Width;
+            int x = idx % this.Size.Width;
+            int y = idx / this.Size.Width;
 
             byte neighbors = 0;
 
@@ -165,10 +165,10 @@ namespace WPFClient1.Core
             if (this.IsNeighborAlive(x, y, 1, 1))
                 neighbors++;
 
-            var isAlive = this.GetWorldCell(x, y);
+            bool isAlive = this.GetWorldCell(x, y);
 
             // Rules : https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules 
-            var stillAlive = isAlive && neighbors is 2 or 3;
+            bool stillAlive = isAlive && neighbors is 2 or 3;
 
             stillAlive |= !isAlive && neighbors == 3;
 
